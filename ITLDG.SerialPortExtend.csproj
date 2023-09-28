@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<PackageIcon>logo.png</PackageIcon>
+		<Title>ITLDG.SerialPortExtend</Title>
+		<Authors>ITLDG</Authors>
+		<Description>SerialPort的增强扩展</Description>
+		<VersionPrefix>1.0.0</VersionPrefix>
+		<PackageProjectUrl>https://www.itldg.com</PackageProjectUrl>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+		<PackageReadmeFile>ReadMe.md</PackageReadmeFile>
+		<RepositoryType>git</RepositoryType>
+		<RepositoryUrl>https://github.com/itldg/ITLDG.SerialPortExtend</RepositoryUrl>
+		<PackageTags>SerialPort,Chars,LineControl,QueueSize,XonChar,XoffChar,HANDFLOW</PackageTags>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="System.IO.Ports" Version="7.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="logo.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Update="ReadMe.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+
+	<Target Name="CopyPackage" AfterTargets="Pack">
+		<Copy SourceFiles="$(OutputPath)..\$(PackageId).$(PackageVersion).nupkg" DestinationFolder="D:\Data\Code\Net\Nuget" />
+	</Target>
+</Project>
