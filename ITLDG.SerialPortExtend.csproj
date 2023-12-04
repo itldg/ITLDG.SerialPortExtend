@@ -6,7 +6,7 @@
 		<Title>ITLDG.SerialPortExtend</Title>
 		<Authors>ITLDG</Authors>
 		<Description>SerialPort的增强扩展</Description>
-		<VersionPrefix>1.0.0</VersionPrefix>
+		<VersionPrefix>1.0.1</VersionPrefix>
 		<PackageProjectUrl>https://www.itldg.com</PackageProjectUrl>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
@@ -19,6 +19,7 @@
 
 	<ItemGroup>
 	  <PackageReference Include="System.IO.Ports" Version="7.0.0" />
+	  <PackageReference Include="System.Management" Version="8.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>

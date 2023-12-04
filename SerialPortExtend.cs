@@ -1,8 +1,12 @@
 ﻿using Microsoft.Win32.SafeHandles;
 using System;
+using System.Collections.Generic;
 using System.IO.Ports;
+using System.Linq;
+using System.Management;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using static ITLDG.SerialPortExtend.NativeStructs;
 
 namespace ITLDG.SerialPortExtend
@@ -53,6 +57,57 @@ namespace ITLDG.SerialPortExtend
         internal const uint IOCTL_SERIAL_SET_CHARS = 0x1b005c;
         internal const uint IOCTL_SERIAL_SET_HANDFLOW = 0x1b0064;
 
+        private const string COM_PATTERN = @"COM[0-9]+";
+        private const string PORT_INFO_SELECT_SQL = "SELECT * FROM Win32_PnPEntity WHERE Caption like '%(COM%'";
+        /// <summary>
+        /// 获取串口名称
+        /// </summary>
+        /// <returns>返回串口名称词典</returns>
+        public static List<SerialPortInfo> GetPortNames()
+        {
+            string[] portNames = new string[0];
+            Dictionary<string, string> dict = new Dictionary<string, string>();
+            try
+            {
+                portNames = SerialPort.GetPortNames();
+                using (var searcher = new ManagementObjectSearcher(PORT_INFO_SELECT_SQL))
+                {
+                    var ports = searcher.Get().Cast<ManagementBaseObject>().ToList().Select(p => p["Caption"].ToString());
+                    var portList = portNames.Select(n => ports.FirstOrDefault(s => s.EndsWith(n + ")"))).ToList();
+                    foreach (string detail in portList)
+                    {
+                        if (Regex.Match(detail, COM_PATTERN) is Match match && match.Success && match.Groups != null &&
+                            match.Value is string portName && !string.IsNullOrEmpty(portName) &&
+                            !dict.ContainsKey(portName))
+                        {
+                            dict.Add(portName, detail);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                try
+                {
+                    foreach (var item in portNames)
+                    {
+                        if (int.TryParse(item.ToUpper().Replace("COM", ""), out _) && !dict.ContainsKey(item))
+                        {
+                            dict.Add(item, item);
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                }
+            }
+            List<SerialPortInfo> list = new List<SerialPortInfo>();
+            foreach (var item in dict)
+            {
+                list.Add(new SerialPortInfo() { COM = item.Key, Name = item.Value });
+            }
+            return list;
+        }
 
         [DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         internal static extern bool DeviceIoControl(IntPtr hDevice, uint ioControlCode,
