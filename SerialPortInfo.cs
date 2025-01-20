@@ -49,7 +49,10 @@ namespace ITLDG.SerialPortExtend
                 return SerialPortType.Unknown;
             }
         }
-
+        public override string ToString()
+        {
+            return Name;
+        }
     }
     /// <summary>
     /// 串口类型

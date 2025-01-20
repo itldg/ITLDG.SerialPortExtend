@@ -76,6 +76,10 @@ namespace ITLDG.SerialPortExtend
                     var portList = portNames.Select(n => ports.FirstOrDefault(s => s.EndsWith(n + ")"))).ToList();
                     foreach (string detail in portList)
                     {
+                        if(detail == null)
+                        {
+                            continue;
+                        }
                         if (Regex.Match(detail, COM_PATTERN) is Match match && match.Success && match.Groups != null &&
                             match.Value is string portName && !string.IsNullOrEmpty(portName) &&
                             !dict.ContainsKey(portName))
